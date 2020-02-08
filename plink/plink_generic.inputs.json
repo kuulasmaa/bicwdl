@@ -1,0 +1,7 @@
+{
+  "plink.genoFile": "File",
+  "plink.params": "String",
+  "plink.phenoFile": "File? (optional)",
+  "plink.out": "String? (optional)",
+  "#plink.run.outDir": "String?? (optional)"
+}

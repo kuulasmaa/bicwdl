@@ -1,0 +1,26 @@
+{
+  "##_Comment1":"Input",
+  "KallistoPseudcounting.Pseudocounting.inputFqs": "Array[File]+",
+  "KallistoPseudcounting.Pseudocounting.index": "String",
+  "##_Comment2":"Optional parameters"
+  "KallistoPseudcounting.Pseudocounting.output_dir": "String (optional, default = \".\")",
+  "KallistoPseudcounting.Pseudocounting.bias": "Boolean? (optional)",
+  "KallistoPseudcounting.Pseudocounting.bootstrap_samples": "Int? (optional)",
+  "KallistoPseudcounting.Pseudocounting.seed": "Int? (optional)",
+  "KallistoPseudcounting.Pseudocounting.plaintext": "Boolean? (optional)",
+  "KallistoPseudcounting.Pseudocounting.fusion": "Boolean? (optional)",
+  "KallistoPseudcounting.Pseudocounting.single": "Boolean? (optional)",
+  "KallistoPseudcounting.Pseudocounting.single_overhang": "Boolean? (optional)",
+  "KallistoPseudcounting.Pseudocounting.fr_stranded": "Boolean? (optional)",
+  "KallistoPseudcounting.Pseudocounting.rf_stranded": "Boolean? (optional)"
+  "KallistoPseudcounting.Pseudocounting.fragment_length": "Float? (optional)",
+  "KallistoPseudcounting.Pseudocounting.sd": "Float? (optional)",
+  "KallistoPseudcounting.Pseudocounting.pseudobam": "String? (optional)",
+  "KallistoPseudcounting.Pseudocounting.genomebam": "String? (optional)",
+  "KallistoPseudcounting.Pseudocounting.gtf": "String? (optional)",
+  "KallistoPseudcounting.Pseudocounting.chromosomes": "String? (optional)",
+  "##_Comment3":"Runtime parameters"
+  "KallistoPseudcounting.Pseudocounting.dockerImage": "String? (optional)",
+  "KallistoPseudcounting.Pseudocounting.threads": "Int (optional, default = 4)",
+  "KallistoPseudcounting.Pseudocounting.memory": "String (optional, default = \"8G\")",
+}

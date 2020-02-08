@@ -1,0 +1,133 @@
+Bootstrap: library
+From: ubuntu:18.04
+
+%labels
+    Owner UEF Bioinformatics Center
+    Author Teemu.Kuulasmaa@uef.fi
+    Version v2020-01 
+
+%help
+    UEF Bioinformatics Center / bioinformatics toolkit for GWAS analysis
+
+%environment
+    export LC_ALL=C
+
+%setup
+    # 
+
+%files
+    #
+
+%post
+    #
+    # system
+    #
+    #apt-get -q update
+    #apt-get -q -y install --no-install-recommends apt-utils apt-transport-https software-properties-common
+    #add-apt-repository main
+    #add-apt-repository restricted
+    #add-apt-repository universe
+    #add-apt-repository multiverse
+    apt-get -q update
+    apt-get -q -y install --no-install-recommends libncurses5-dev zlib1g-dev libbz2-dev liblzma-dev libssl-dev libcurl4-openssl-dev ca-certificates 
+    apt-get -q -y install --no-install-recommends build-essential automake autoconf cmake git
+    apt-get -q -y install --no-install-recommends curl wget grep sed unzip
+    #apt-get -q -y install --no-install-recommends dos2unix datamash # repository: [universe]
+    #apt-get -q -y install --no-install-recommends python3 # repository: [universe]
+
+    
+    #
+    # bcftools
+    #
+    curl -SsOL https://github.com/samtools/bcftools/releases/download/1.10/bcftools-1.10.tar.bz2
+    tar jxf bcftools-1.10.tar.bz2
+    cd bcftools-1.10
+    ./configure
+    make
+    #make test
+    make install
+    cd ..
+
+    #
+    # htslib
+    #
+    curl -SsOL https://github.com/samtools/htslib/releases/download/1.10/htslib-1.10.tar.bz2
+    tar jxf htslib-1.10.tar.bz2
+    cd htslib-1.10
+    ./configure
+    make
+    #make test
+    make install
+    cd ..
+    rm -rf samtools-1.10* bcftools-1.10* htslib-1.10*
+
+    #
+    # bedtools
+    # # FIXME: make fails if python2 is not installed!
+    #curl -SsOL https://github.com/arq5x/bedtools2/releases/download/v2.29.2/bedtools-2.29.2.tar.gz
+    #tar zxf bedtools-2.29.2.tar.gz
+    #cd bedtools2
+    #make
+    ##make test
+    #make install
+    #cd ..
+    #rm -rf bedtools*
+
+    #
+    # plink1.9, plink2
+    #
+    curl -SsOL http://s3.amazonaws.com/plink1-assets/plink_linux_x86_64_20200121.zip
+    unzip plink_linux_x86_64_20200121.zip -d plink
+    cp plink/plink /usr/local/bin/
+    rm -rf plink
+
+    curl -SsOL http://s3.amazonaws.com/plink2-assets/plink2_linux_x86_64_20200203.zip
+    unzip plink2_linux_x86_64_20200203.zip -d plink2
+    cp plink2/plink2 /usr/local/bin/
+    rm -rf plink2
+
+    #
+    # R
+    #
+    #apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+    #add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/'
+    #apt-get -q -y install --no-install-recommends r-base
+
+    #
+    # clean-up
+    #
+    apt-get -q -y purge build-essential curl automake autoconf cmake git unzip apt-utils apt-transport-https software-properties-common \
+       libncurses5-dev zlib1g-dev libbz2-dev liblzma-dev libssl-dev libcurl4-openssl-dev  ca-certificates
+    apt-get -q -y autoremove
+    apt-get -q -y clean
+    rm -rf /var/lib/apt/lists/* /var/lib/apt/extended_states \
+    /var/cache/* /var/lib/dpkg/status /var/lib/dpkg/status-old \
+    /etc/ld.so.cache /var/log/faillog /var/log/lastlog \
+    /var/lib/apt/extended_states
+
+%runscript
+    echo "UEF Bioinformatics Center / bioinformatics toolkit for GWAS analysis"
+
+%apprun bcftools
+    /usr/local/bin/bcftools "$@"
+
+%apprun htsfile
+    /usr/local/bin/htsfile "$@"
+
+%apprun bgzip
+    /usr/local/bin/bgzip "$@"
+
+%apprun tabix
+    /usr/local/bin/tabix "$@"
+
+%apprun plink
+    /usr/local/bin/plink "$@"
+
+%apprun plink2
+    /usr/local/bin/plink2 "$@"
+
+#%apprun bedtools
+#    /usr/local/bin/bedtools "$@"
+
+#%apprun Rscript
+#    /usr/local/bin/Rscript "$@"

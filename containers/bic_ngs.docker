@@ -1,0 +1,94 @@
+# Base Image
+FROM ubuntu:18.04
+
+# Metadata
+LABEL base.image="ubuntu:18.04"
+LABEL version="0.1"
+LABEL description="UEF Bioinformatics Center / bioinformatics toolkit for NGS analysis"
+
+# Maintainer
+MAINTAINER Teemu Kuulasmaa <teemu.kuulasmaa@uef.fi>
+
+#SHELL ["/bin/bash"]
+
+# System
+RUN apt-get -q update && \
+    apt-get -q -y install --no-install-recommends apt-utils apt-transport-https software-properties-common && \
+    rm -rf /var/lib/apt/lists/*
+#RUN add-apt-repository main
+#RUN add-apt-repository restricted
+RUN add-apt-repository universe
+#RUN add-apt-repository multiverse
+RUN apt-get -q update && \
+    apt-get -q -y install --no-install-recommends libncurses5-dev zlib1g-dev libbz2-dev liblzma-dev libssl-dev libcurl4-openssl-dev \
+    build-essential automake autoconf cmake git curl unzip ca-certificates python3-pip fastx-toolkit && \
+    rm -rf /var/lib/apt/lists/*
+#RUN apt-get -q -y install --no-install-recommends dos2unix datamash # repository: [universe]
+
+# fastx-toolkit (repository: [universe])
+#RUN apt-get -q -y install --no-install-recommends fastx-toolkit
+
+# bwa
+RUN curl -SsOL https://github.com/lh3/bwa/releases/download/v0.7.17/bwa-0.7.17.tar.bz2 && \
+    tar jxf bwa-0.7.17.tar.bz2
+WORKDIR /bwa-0.7.17
+RUN make && cp bwa /usr/local/bin/
+WORKDIR /
+
+# samtools
+RUN curl -SsOL https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2 && \
+    tar jxf samtools-1.10.tar.bz2
+WORKDIR /samtools-1.10
+RUN ./configure && make && make install
+WORKDIR /
+
+# bcftools
+RUN curl -SsOL https://github.com/samtools/bcftools/releases/download/1.10/bcftools-1.10.tar.bz2 && \
+    tar jxf bcftools-1.10.tar.bz2
+WORKDIR /bcftools-1.10
+RUN ./configure && make && make install
+WORKDIR /
+
+# htslib
+RUN curl -SsOL https://github.com/samtools/htslib/releases/download/1.10/htslib-1.10.tar.bz2 && \
+    tar jxf htslib-1.10.tar.bz2
+WORKDIR /htslib-1.10
+RUN ./configure && make && make install
+WORKDIR /
+RUN rm -rf bwa-0.7.17* samtools-1.10* bcftools-1.10* htslib-1.10*
+
+# kallisto
+RUN curl -SsOL https://github.com/pachterlab/kallisto/releases/download/v0.46.1/kallisto_linux-v0.46.1.tar.gz && \
+    tar zxf kallisto_linux-v0.46.1.tar.gz && \
+    cp kallisto/kallisto /usr/local/bin/ && rm -rf kallisto*
+
+# fastqc
+RUN curl -SsOL http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip && \
+    unzip fastqc_v0.11.9.zip && \
+    rm fastqc_v0.11.9.zip && rm -rf FastQC/Help && \
+    mv FastQC /usr/local/bin/fastqc
+
+# gatk
+RUN curl -SsOL https://github.com/broadinstitute/gatk/releases/download/4.1.4.1/gatk-4.1.4.1.zip && \
+    unzip gatk-4.1.4.1.zip && \
+    rm gatk-4.1.4.1.zip && rm -rf gatk-4.1.4.1/gatkdoc && \
+    rm -rf gatk-4.1.4.1/scripts && \
+    mv gatk-4.1.4.1 /usr/local/bin/gatk
+
+# bowtie2, picard, trimmomatic
+
+# cutadapt, multiqc
+RUN pip3 install cutadapt==2.8 multiqc==1.8
+
+# clean-up
+RUN apt-get -q -y purge build-essential curl automake autoconf cmake git unzip ca-certificates \
+    libncurses5-dev zlib1g-dev libbz2-dev liblzma-dev libssl-dev libcurl4-openssl-dev \
+    apt-utils apt-transport-https software-properties-common
+RUN apt-get -q -y autoremove
+RUN apt-get -q -y clean
+RUN rm -rf /var/lib/apt/lists/* /var/lib/apt/extended_states \
+  /var/cache/* /var/lib/dpkg/status /var/lib/dpkg/status-old \
+  /etc/ld.so.cache /var/log/faillog /var/log/lastlog \
+  /var/lib/apt/extended_states
+
+WORKDIR /

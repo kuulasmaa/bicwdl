@@ -1,0 +1,193 @@
+Bootstrap: library
+From: ubuntu:18.04
+
+#
+# #Pull with Singularity
+# $ singularity pull --arch amd64 library://teemu/remote-builds/rb-5e34547ecf9a258a720145e1:latest
+# #Pull by unique ID (reproducible even if tags change)
+# $ singularity pull library://teemu/remote-builds/rb-5e34547ecf9a258a720145e1:sha256.6b833a18b5a2b89f1f9bf17679aeba2ffe900786761de282e6fda985744c7759
+#
+
+%labels
+    Author UEF_BIC
+    Version v2020-01 
+
+%help
+    UEF Bioinformatics Center singularity image / bioinformatics toolkit for NGS and GWAS analysis
+
+%environment
+    export LC_ALL=C
+
+%setup
+    # 
+
+%files
+    #
+
+%post
+    #
+    # system
+    #
+    apt-get -q update
+    apt-get -q -y install apt-utils apt-transport-https software-properties-common
+    add-apt-repository main
+    add-apt-repository restricted
+    add-apt-repository universe
+    add-apt-repository multiverse
+    apt-get -q update
+    apt-get -q -y upgrade
+    apt-get -q -y install libncurses5-dev zlib1g-dev libbz2-dev liblzma-dev
+    apt-get -q -y install build-essential automake autoconf cmake git
+    apt-get -q -y install curl wget dos2unix grep sed unzip
+    apt-get -q -y install python python3 python3-pip openjdk-11-jre-headless
+
+    #
+    # fastx-toolkit
+    #
+    apt-get -q -y install fastx-toolkit
+
+    #
+    # bwa
+    #
+    curl -SsOL https://github.com/lh3/bwa/releases/download/v0.7.17/bwa-0.7.17.tar.bz2
+    tar jxf bwa-0.7.17.tar.bz2
+    cd bwa-0.7.17
+    make
+    cp bwa /usr/local/bin/
+    cd ..
+    rm -rf bwa-0.7.17*
+
+    #
+    # samtoos, bcftools, htslib
+    #
+    curl -SsOL https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2
+    curl -SsOL https://github.com/samtools/bcftools/releases/download/1.10/bcftools-1.10.tar.bz2
+    curl -SsOL https://github.com/samtools/htslib/releases/download/1.10/htslib-1.10.tar.bz2
+    tar jxf samtools-1.10.tar.bz2
+    tar jxf bcftools-1.10.tar.bz2
+    tar jxf htslib-1.10.tar.bz2
+    cd samtools-1.10
+    ./configure
+    make
+    make test
+    make install
+    cd ..
+    cd bcftools-1.10
+    ./configure
+    make
+    make test
+    make install
+    cd ..
+    cd htslib-1.10
+    ./configure
+    make
+    make test
+    make install
+    cd ..
+    rm -rf samtools-1.10* bcftools-1.10* htslib-1.10*
+ 
+    #
+    # bedtools
+    #
+    curl -SsOL https://github.com/arq5x/bedtools2/releases/download/v2.29.2/bedtools-2.29.2.tar.gz
+    tar zxf bedtools-2.29.2.tar.gz
+    cd bedtools2
+    make
+    #make test
+    make install
+    cd ..
+    rm -rf bedtools*
+
+    #
+    # bamtools
+    #
+    #curl -SsOL https://github.com/pezmaster31/bamtools/archive/v2.5.1.tar.gz
+    #tar zxf v2.5.1.tar.gz
+
+    #
+    # kallisto
+    #
+    curl -SsOL https://github.com/pachterlab/kallisto/releases/download/v0.46.1/kallisto_linux-v0.46.1.tar.gz
+    tar zxf kallisto_linux-v0.46.1.tar.gz
+    cp kallisto/kallisto /usr/local/bin/
+    rm -rf kallisto*
+
+    #
+    # plink1.9, plink2
+    #
+    curl -SsOL http://s3.amazonaws.com/plink1-assets/plink_linux_x86_64_20200121.zip
+    unzip plink_linux_x86_64_20200121.zip -d plink
+    cp plink/plink /usr/local/bin/
+    rm -rf plink
+
+    curl -SsOL http://s3.amazonaws.com/plink2-assets/plink2_linux_x86_64_20200124.zip
+    unzip plink2_linux_x86_64_20200124.zip -d plink2
+    cp plink2/plink2 /usr/local/bin/
+    rm -rf plink2
+
+    #
+    # fastqc
+    #
+    curl -SsOL http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip
+    unzip fastqc_v0.11.9.zip
+    mv FastQC /usr/local/bin/fastqc
+	
+	#
+	# bowtie2, picard, trimmomatic
+	#
+	
+    #
+    # multiqc
+    #
+    pip3 install multiqc
+
+    #
+    # R
+    #
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+    add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/'
+    apt-get -q -y install r-base
+
+    #
+    # clean-up
+    #
+    apt-get -q -y purge build-essential curl
+    apt-get -q -y autoremove
+    apt-get -q -y clean
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    echo "UEF Bioinformatics Center singularity image"
+
+%apprun samtools
+    /usr/local/bin/samtools "$@"
+
+%apprun bcftools
+    /usr/local/bin/bcftools "$@"
+
+%apprun htsfile
+    /usr/local/bin/htsfile "$@"
+
+%apprun bgzip
+    /usr/local/bin/bgzip "$@"
+
+%apprun tabix
+    /usr/local/bin/tabix "$@"
+
+%apprun bwa
+    /usr/local/bin/bwa "$@"
+
+%apprun kallisto
+    /usr/local/bin/kallisto "$@"
+
+%apprun bedtools
+    /usr/local/bin/bedtools "$@"
+
+%apprun plink
+    /usr/local/bin/plink "$@"
+
+%apprun plink2
+    /usr/local/bin/plink2 "$@"
+	
+%apprun Rscript
+    /usr/local/bin/Rscript "$@"
