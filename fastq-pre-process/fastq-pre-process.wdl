@@ -96,8 +96,14 @@ workflow FastqPreProcess {
     }
 
     output {
-        File qcRead1 = select_first([Cutadapt.cutRead1, read1])
-        File? qcRead2 = select_first([Cutadapt.cutRead2, read2])
+        #File qcRead1 = select_first([Cutadapt.cutRead1, read1])
+        #File? qcRead2 = select_first([Cutadapt.cutRead2, read2])
+        File qcRead1 = if runAdapterClipping
+            then select_first([Cutadapt.cutRead1])
+            else read1
+        File? qcRead2 = if runAdapterClipping
+            then Cutadapt.cutRead2
+            else read2
         File read1htmlReport = FastqcRead1.htmlReport
         File read1reportZip = FastqcRead1.reportZip
         File? read2htmlReport = FastqcRead2.htmlReport

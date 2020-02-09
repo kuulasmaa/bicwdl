@@ -9,22 +9,22 @@ LABEL description="UEF Bioinformatics Center / bioinformatics toolkit for GWAS a
 # Maintainer
 MAINTAINER Teemu Kuulasmaa <teemu.kuulasmaa@uef.fi>
 
-#SHELL ["/bin/bash"]
+# Environment
+ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/fastqc/:/usr/local/bin/gatk/:${PATH}"
+ENV BCFTOOLS_PLUGINS="/usr/local/libexec/bcftools"
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+ENV HOME /root
+
+# Define default command.
+CMD ["bash"]
 
 # System
-#RUN apt-get -q update && \
-#     apt-get -q -y install --no-install-recommends apt-utils apt-transport-https software-properties-common && \
-#     rm -rf /var/lib/apt/lists/*
-#RUN add-apt-repository main
-#RUN add-apt-repository restricted
-#RUN add-apt-repository universe
-#RUN add-apt-repository multiverse
 RUN apt-get -q update && \
     apt-get -q -y install --no-install-recommends libncurses5-dev zlib1g-dev libbz2-dev liblzma-dev libssl-dev libcurl4-openssl-dev \
-    build-essential automake autoconf cmake git curl unzip ca-certificates && \
+    libncurses5 zlib1g libbz2-1.0 liblzma5 libssl1.1 libcurl4 \
+    build-essential automake autoconf cmake git curl unzip dos2unix datamash ca-certificates && \
     rm -rf /var/lib/apt/lists/*
-#RUN apt-get -q -y install --no-install-recommends dos2unix datamash # repository: [universe]
-#RUN apt-get -q -y install --no-install-recommends python3 # repository: [universe]
 
 # bcftools
 RUN curl -SsOL https://github.com/samtools/bcftools/releases/download/1.10/bcftools-1.10.tar.bz2 && \
@@ -47,15 +47,14 @@ RUN rm plink_linux_x86_64_20200121.zip
 RUN cp plink/plink /usr/local/bin/
 RUN rm -rf plink
 
-RUN curl -SsOL http://s3.amazonaws.com/plink2-assets/plink2_linux_x86_64_20200203.zip && unzip plink2_linux_x86_64_20200203.zip -d plink2
-RUN rm plink2_linux_x86_64_20200203.zip
+RUN curl -SsOL http://s3.amazonaws.com/plink2-assets/plink2_linux_x86_64_20200208.zip && unzip plink2_linux_x86_64_20200208.zip -d plink2
+RUN rm plink2_linux_x86_64_20200208.zip
 RUN cp plink2/plink2 /usr/local/bin/
 RUN rm -rf plink2
 
 # clean-up
 #  apt-utils apt-transport-https software-properties-common
-RUN apt-get -q -y purge build-essential curl automake autoconf cmake git unzip ca-certificates \
-     libncurses5-dev zlib1g-dev libbz2-dev liblzma-dev libssl-dev libcurl4-openssl-dev
+RUN apt-get -q -y purge build-essential curl automake autoconf cmake libncurses5-dev zlib1g-dev libbz2-dev liblzma-dev libssl-dev libcurl4-openssl-dev
 RUN apt-get -q -y autoremove
 RUN apt-get -q -y clean
 RUN rm -rf /var/lib/apt/lists/* /var/lib/apt/extended_states \
@@ -63,4 +62,5 @@ RUN rm -rf /var/lib/apt/lists/* /var/lib/apt/extended_states \
   /etc/ld.so.cache /var/log/faillog /var/log/lastlog \
   /var/lib/apt/extended_states
 
+# Define working directory.
 WORKDIR /

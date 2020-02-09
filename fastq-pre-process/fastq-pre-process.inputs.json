@@ -114,10 +114,10 @@
   "#FastqPreProcess.FastqcRead2After.minLength": "Int? (optional)",
   "#FastqPreProcess.FastqcRead2After.nano": "Boolean (optional, default = false)",
   "#FastqPreProcess.FastqcRead2After.noFilter": "Boolean (optional, default = false)",
-  "#FastqPreProcess.FastqcRead2After.nogroup": "Boolean (optional, default = false)"
+  "#FastqPreProcess.FastqcRead2After.nogroup": "Boolean (optional, default = false)",
   "#FastqPreProcess.FastqcRead2After.NoneArray": "Array[File]? (optional)",
   "#FastqPreProcess.FastqcRead2After.NoneFile": "File? (optional)",
   "#FastqPreProcess.FastqcRead2After.threads": "Int (optional, default = 1)",
-  "#FastqPreProcess.dockerImages": "Map[String, String] (optional, default = { \"fastqc\": \"quay.io/biocontainers/fastqc:0.11.7--4\", \"cutadapt\": \"quay.io/biocontainers/cutadapt:2.4--py37h14c3975_0\" })",
+  "#FastqPreProcess.dockerImages": "Map[String, String] (optional, default = { \"fastqc\": \"quay.io/biocontainers/fastqc:0.11.7--4\", \"cutadapt\": \"quay.io/biocontainers/cutadapt:2.4--py37h14c3975_0\" })"
 }
 

@@ -30,7 +30,7 @@ bicuef/bic_gwas      latest             ce58de56bd33       12 seconds ago       
 
 ```
 $ docker images
-$ docker --login <username> docker.io
+$ docker login --username <username> docker.io
 $ docker push <username or organization>/<repository>:<tag>
 ```
 
@@ -42,7 +42,7 @@ REPOSITORY           TAG                IMAGE ID            CREATED             
 bic_gwas             latest             ce58de56bd33        2 seconds ago       460MB
 bicuef/bic_gwas      latest             ce58de56bd33       12 seconds ago       460MB
 
-$ docker --login kuulasmaa docker.io
+$ docker login --username kuulasmaa docker.io
 
 Password:
 WARNING! Your password will be stored unencrypted in /home/teemu/.docker/config.json.
@@ -59,14 +59,14 @@ $ docker tag ce58de56bd33 bicuef/bic_gwas:latest
 
 ```
 # required if pulling from private repository
-$ docker --login <username> docker.io
+$ docker login --username <username> docker.io
 $ docker pull <username or organization>/<repository>:<tag>
 ```
 
 Example (uefbic/bic_gwas):
 ```
 # required if pulling from private repository
-$ docker --login kuulasmaa docker.io
+$ docker login --username kuulasmaa docker.io
 
 Password:
 WARNING! Your password will be stored unencrypted in /home/teemu/.docker/config.json.
