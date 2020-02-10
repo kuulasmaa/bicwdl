@@ -1,28 +1,10 @@
 version 1.0
-
-##
-## 
-## 
-##
-## Main requirements/expectations :
-## 
-##
-## Description of inputs:
-##
-## ** Runtime **
-## 
-##
-## ** Workflow options **
-## 
-##
-## ** Primary inputs **
-## 
-##
+# Copyright 2018 Sequencing Analysis Support Core - Leiden University Medical Center
 
 import "tasks/cutadapt.wdl" as cutadapt
 import "tasks/fastqc.wdl" as fastqc
 
-workflow FastqPreProcess {
+workflow QC {
     input {
         File read1
         File? read2
@@ -31,10 +13,10 @@ workflow FastqPreProcess {
         String? adapterReverse = "AGATCGGAAGAG"  # Illumina universal adapter
         Array[String]+? contaminations
         # A readgroupName so cutadapt creates a unique report name. This is useful if all the QC files are dumped in one folder.
-        String readgroupName = sub(basename(read1), "(\.fq)?(\.fastq)?(\.gz)?", "")
+        String readgroupName = sub(basename(read1),"(\.fq)?(\.fastq)?(\.gz)?", "")
         Map[String, String] dockerImages = {
-          "fastqc": "quay.io/biocontainers/fastqc:0.11.7--4",
-          "cutadapt": "quay.io/biocontainers/cutadapt:2.4--py37h14c3975_0"
+        "fastqc": "quay.io/biocontainers/fastqc:0.11.7--4",
+        "cutadapt": "quay.io/biocontainers/cutadapt:2.4--py37h14c3975_0"
         }
         # Only run cutadapt if it makes sense.
         Boolean runAdapterClipping = defined(adapterForward) || defined(adapterReverse) || length(select_first([contaminations, []])) > 0
@@ -59,6 +41,7 @@ workflow FastqPreProcess {
                 outdirPath = outputDir + "/",
                 dockerImage = dockerImages["fastqc"]
         }
+        String read2outputPath = outputDir + "/cutadapt_" + basename(select_first([read2]))
     }
 
     if (runAdapterClipping) {
@@ -67,7 +50,7 @@ workflow FastqPreProcess {
                 read1 = read1,
                 read2 = read2,
                 read1output = outputDir + "/cutadapt_" + basename(read1),
-                read2output = if defined(read2) then outputDir + "/cutadapt_" + basename(select_first([read2])) else "",
+                read2output = read2outputPath,
                 adapter = select_all([adapterForward]),
                 anywhere = select_first([contaminations, []]),
                 adapterRead2 = adapterReverseDefault,
@@ -96,8 +79,6 @@ workflow FastqPreProcess {
     }
 
     output {
-        #File qcRead1 = select_first([Cutadapt.cutRead1, read1])
-        #File? qcRead2 = select_first([Cutadapt.cutRead2, read2])
         File qcRead1 = if runAdapterClipping
             then select_first([Cutadapt.cutRead1])
             else read1

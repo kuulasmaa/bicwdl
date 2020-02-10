@@ -5,9 +5,7 @@ FROM ubuntu:18.04
 LABEL base.image="ubuntu:18.04"
 LABEL version="0.1"
 LABEL description="UEF Bioinformatics Center / bioinformatics toolkit for NGS analysis"
-
-# Maintainer
-MAINTAINER Teemu Kuulasmaa <teemu.kuulasmaa@uef.fi>
+LABEL maintainer="Teemu Kuulasmaa <teemu.kuulasmaa@uef.fi>"
 
 # Environment
 ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/fastqc/:/usr/local/bin/gatk/:${PATH}"
@@ -36,6 +34,7 @@ RUN apt-get -q update && \
 #RUN ./configure && make && make install
 #WORKDIR /
 #RUN rm -rf fastx_toolkit-0.0.14.tar.bz2
+RUN apt-get install fastx-toolkit
   
 # bwa
 RUN curl -SsOL https://github.com/lh3/bwa/releases/download/v0.7.17/bwa-0.7.17.tar.bz2 && \
@@ -82,15 +81,26 @@ RUN curl -SsOL http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v
     ln -sf /usr/local/bin/FastQC/fastqc /usr/local/bin/fastqc
 
 # gatk
-RUN curl -SsOL https://github.com/broadinstitute/gatk/releases/download/4.1.4.1/gatk-4.1.4.1.zip && \
-    unzip gatk-4.1.4.1.zip && \
-    rm gatk-4.1.4.1.zip && rm -rf gatk-4.1.4.1/gatkdoc && \
-    rm -rf gatk-4.1.4.1/scripts && \
-    mv gatk-4.1.4.1 /usr/local/bin/GATK && chmod 755 /usr/local/bin/GATK/gatk && \
-    ln -sf /usr/local/bin/GATK/gatk /usr/local/bin/gatk
+#RUN curl -SsOL https://github.com/broadinstitute/gatk/releases/download/4.1.4.1/gatk-4.1.4.1.zip && \
+#    unzip gatk-4.1.4.1.zip && \
+#    rm gatk-4.1.4.1.zip && rm -rf gatk-4.1.4.1/gatkdoc && \
+#    rm -rf gatk-4.1.4.1/scripts && \
+#    mv gatk-4.1.4.1 /usr/local/bin/GATK && chmod 755 /usr/local/bin/GATK/gatk && \
+#    ln -sf /usr/local/bin/GATK/gatk /usr/local/bin/gatk
 
-# bowtie2, picard, trimmomatic
-# RUN xxx
+# bowtie2
+RUN curl -SsOL https://github.com/BenLangmead/bowtie2/releases/download/v2.3.5.1/bowtie2-2.3.5.1-linux-x86_64.zip && \
+    unzip bowtie2-2.3.5.1-linux-x86_64.zip -d bowtie2 && \
+    rm bowtie2-2.3.5.1-linux-x86_64.zip && \
+    mv bowtie2 /usr/local/bin/ && \
+    ln -sf /usr/local/bin/bowtie2/bowtie2 /usr/local/bin/bowtie2
+
+# Trimmomatic
+RUN curl -SsOL ttp://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.39.zip && \
+    unzip Trimmomatic-0.39.zip && \
+    rm Trimmomatic-0.39.zip && \
+    mv Trimmomatic-0.39 /usr/local/bin/ && \
+    ln -sf /usr/local/bin/Trimmomatic-0.39/Trimmomatic-0.39.jar /usr/local/bin/trimmomatic.jar
 
 # cutadapt, multiqc
 RUN pip3 install cutadapt==2.8 multiqc==1.8
@@ -106,3 +116,6 @@ RUN rm -rf /var/lib/apt/lists/* /var/lib/apt/extended_states \
 
 # Define working directory.
 WORKDIR /
+
+
+

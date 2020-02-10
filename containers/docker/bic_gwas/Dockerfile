@@ -5,9 +5,7 @@ FROM ubuntu:18.04
 LABEL base.image="ubuntu:18.04"
 LABEL version="0.1"
 LABEL description="UEF Bioinformatics Center / bioinformatics toolkit for GWAS analysis"
-
-# Maintainer
-MAINTAINER Teemu Kuulasmaa <teemu.kuulasmaa@uef.fi>
+LABEL maintainer="Teemu Kuulasmaa <teemu.kuulasmaa@uef.fi>"
 
 # Environment
 ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/fastqc/:/usr/local/bin/gatk/:${PATH}"
